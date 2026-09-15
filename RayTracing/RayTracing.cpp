@@ -1,32 +1,41 @@
-﻿// RayTracing.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
-//
+#include "vec3.h"
+#include "color.h"
+#include "ray.h"
 
 #include <iostream>
 
+int main() {
+	//  设置宽高比
+	auto aspect_ratio = 16.0 / 9.0;
+	int image_width = 400;
 
-int main()
-{
-	 // Image
-	int image_width{256};
-	int image_height{256};
+	// 计算图像高度，并且确保它至少大于1
+	int image_height = static_cast<int>(image_width / aspect_ratio);
+	image_height = image_height > 1 ? image_height : 1;
 
-	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+	// 相机
+	auto focal_length = 1.0;
 
-	for (int j{ 0 }; j < image_height; ++j) {
-		std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
-		for (int i{ 0 }; i < image_width; ++i) {
-			auto r{ static_cast<double>(i) / (image_width - 1) };
-			auto g{ static_cast<double>(j) / (image_height - 1) };
-			auto b{ 0.0 };
+	// 视口宽度可以小于1，因为他们是实数
+	auto viewport_height = 2.0;
+	auto viewport_width = viewport_height * (static_cast<double>(image_width) / static_cast<double>(image_height));
 
-			int ir{ static_cast<int>(255.999 * r)  };
-			int ig{ static_cast<int>(255.999 * g) };
-			int ib{ static_cast<int>(255.999 * b) };
+	// 原点
+	auto camera_center = point3(0, 0, 0);
 
-			std::cout << ir << ' ' << ig << ' ' << ib << '\n';
+	// 计算横跨视口的水平和垂直向量
+	auto viewport_u = vec3(viewport_width, 0, 0);
+	auto viewport_v = vec3(0, viewport_height, 0);
 
-		}
-	}
+	// 计算每个像素对应的变化的delta_x和delta_y
+	auto pixel_delta_x = viewport_u / image_width;
+	auto pixel_delta_y = viewport_v / image_height;
 
-	std::clog << "\rDone.                 \n";
+
+
+
+
+
+
+	return 0;
 }
