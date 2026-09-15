@@ -1,0 +1,13 @@
+# Visual Studio local settings and caches
+.vs/
+*.user
+*.suo
+
+# Build outputs
+x64/
+x86/
+[Dd]ebug/
+[Rr]elease/
+
+# Generated render output
+image.ppm
