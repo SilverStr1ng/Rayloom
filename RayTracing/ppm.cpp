@@ -7,7 +7,7 @@
 #include <iostream>
 
 
-int ppm()
+void ppm()
 {
 	 // Image
 	int image_width{256};
