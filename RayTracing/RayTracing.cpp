@@ -1,71 +1,20 @@
-#include "vec3.h"
-#include "color.h"
-#include "ray.h"
+#include "rtweekend.h"
 
-#include <iostream>
 
-static double hit_sphere(const point3& center, double radius, const ray& r)
-{
-	vec3 oc = center - r.origin();
+#include "hittable.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
-	// 将射线方程 P(t) = Q + td 代入球面方程 |P-C|² = R²，
-	// 得到关于 t 的一元二次方程：
-	//
-	// (d·d)t² - 2[d·(C-Q)]t + (C-Q)·(C-Q) - R² = 0
-	//
-	// 因此：
-	// a = d·d
-	// b = -2[d·(C-Q)]
-	// c = (C-Q)·(C-Q) - R²
+static color ray_color(const ray& r, const hittable& world) {
+	hit_record rec{};
 
-	auto a{ dot(r.direction(), r.direction()) };
-	auto b{ -2.0 * dot(r.direction(), oc) };
-	auto c{ dot(oc, oc) - radius * radius };
-
-	auto discriminant{ b * b - 4 * a * c };
-
-	if (discriminant < 0) {
-		return -1.0;
-	}
-	else {
-		// 使用求根公式，取较小的根，即通常离射线原点更近的交点
-		return (-b - std::sqrt(discriminant)) / (2.0 * a);
-	}
-}
-
-static color ray_color(const ray& r) {
-	auto t{ hit_sphere(point3(0, 0, -1), 0.5, r) };
-	if (t > 0.0) {
-		vec3 N{ unit_vector(r.at(t) - vec3(0,0,-1)) };
-		// 单位法线 N 的每个分量范围为：
-		//
-		//     [-1, 1]
-		//
-		// 颜色 RGB 希望位于：
-		//
-		//     [0, 1]
-		//
-		// 所以做映射：
-		//
-		//     [-1,1] → [0,1]
-		//
-		// 即：
-		//
-		//     x → 0.5 * (x + 1)
-		//
-		// 这里直接对三个分量做同样的事情，
-		// 因此球表面的法线方向会显示成不同颜色。
-		return 0.5 * color(
-			N.x() + 1,
-			N.y() + 1,
-			N.z() + 1
-		);
+	if (world.hit(r, 0, infinity, rec)) {
+		return 0.5 * (rec.normal + color(1, 1, 1));
 	}
 
+	vec3 unit_direction{ unit_vector(r.direction()) };
 
-	vec3 unit_direction = unit_vector(r.direction());
-
-	auto a = 0.5 * (unit_direction.y() + 1.0);
+	auto a{ 0.5 * (unit_direction.y() + 1.0) };
 
 	return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
 }
@@ -78,6 +27,12 @@ int main() {
 	// 计算图像高度，并且确保它至少大于1
 	int image_height = static_cast<int>(image_width / aspect_ratio);
 	image_height = image_height > 1 ? image_height : 1;
+
+	// world
+	hittable_list world{};
+
+	world.add(std::make_shared<sphere>(point3(0, 0, -1), 0.5));
+	world.add(std::make_shared<sphere>(point3(0, -100.5, -1), 100));
 
 	// 相机配置
 
@@ -132,7 +87,7 @@ int main() {
 
 			ray r(camera_center, ray_direction);
 
-			color pixel_color = ray_color(r);
+			color pixel_color = ray_color(r,world);
 
 			write_color(std::cout, pixel_color);
 		}
