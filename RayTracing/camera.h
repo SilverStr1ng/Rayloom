@@ -85,7 +85,7 @@ private:
 
 		// 计算横跨视口的水平和垂直向量
 		auto viewport_u = viewport_width * u;
-		auto viewport_v = viewport_width * -v;
+		auto viewport_v = viewport_height * -v;
 
 		// 计算每个像素对应的变化的delta_x和delta_y
 		pixel_delta_u = viewport_u / image_width;
@@ -148,7 +148,9 @@ private:
 		auto ray_origin = (defocus_angle < 0) ? center : defocus_disk_sample();
 		auto ray_direction = pixel_sample - ray_origin;
 
-		return ray(ray_origin, ray_direction);
+		auto ray_time{ random_double() };
+
+		return ray(ray_origin, ray_direction, ray_time);
 	}
 
 	point3 defocus_disk_sample() const {
