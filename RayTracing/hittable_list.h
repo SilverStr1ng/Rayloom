@@ -1,5 +1,6 @@
 #pragma once
 
+#include "aabb.h"
 #include "hittable.h"
 
 #include <memory>
@@ -20,6 +21,7 @@ public:
 	}
 
 	void add(std::shared_ptr<hittable> object) {
+		bbox = aabb(bbox, object->bounding_box());
 		objects.push_back(std::move(object));
 	}
 
@@ -39,4 +41,11 @@ public:
 
 		return hit_anything;
 	}
+
+	aabb bounding_box() const override {
+		return bbox;
+	}
+
+private:
+	aabb bbox;
 };

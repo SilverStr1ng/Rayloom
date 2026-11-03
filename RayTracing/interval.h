@@ -18,6 +18,11 @@ public:
 	{
 	}
 
+	interval(const interval& a, const interval& b) {
+		min = a.min <= b.min ? a.min : b.min;
+		max = a.max >= b.max ? a.max : b.max;
+	}
+
 	double size() const
 	{
 		return max - min;
@@ -38,6 +43,12 @@ public:
 		if (x > max) return max;
 
 		return x;
+	}
+
+	interval expand(double delta) const {
+		auto padding{ delta / 2 };
+
+		return interval(min - padding, max + padding);
 	}
 
 	static const interval empty;

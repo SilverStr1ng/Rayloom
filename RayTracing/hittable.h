@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ray.h"
+#include "aabb.h"
 
 class material;
 
@@ -25,4 +26,6 @@ public:
 
 
 	virtual bool hit(const ray& r, interval r_t, hit_record& rec) const = 0;
+
+	virtual aabb bounding_box() const = 0;
 };

@@ -2,6 +2,7 @@
 
 #include "hittable.h"
 
+
 class material {
 public:
 	virtual ~material() = default;
