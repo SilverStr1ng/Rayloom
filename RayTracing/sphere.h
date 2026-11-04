@@ -56,6 +56,8 @@ public:
 		rec.p = r.at(rec.t);
 		vec3 outward_normal{ (rec.p - current_center) / radius };
 		rec.set_face_normal(r, outward_normal);
+		rec.u = (std::atan2(-outward_normal.z(), outward_normal.x()) + pi) / (2 * pi);
+		rec.v = std::acos(-outward_normal.y()) / pi;
 		rec.mat = mat;
 
 		return true;

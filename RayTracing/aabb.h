@@ -4,11 +4,11 @@ public:
 	interval x, y, z;
 
 	aabb() {} // 默认的AABB是空的，因为区间默认是空的
-		
+
 	aabb(const interval& x, const interval& y, const interval& z)
 		: x{ x }, y{ y }, z{ z } {
 	}
-	
+
 	aabb(const point3& a, const point3& b) {
 		// 将点 a 和 b 视为边界框的极值点，因此我们不要求特定的最小/最大坐标顺序。
 		x = (a[0] <= b[0]) ? interval(a[0], b[0]) : interval(b[0], a[0]);
@@ -54,5 +54,16 @@ public:
 		return true;
 	}
 
+	int longest_axis() const {
+		// 返回包围盒最长的轴的索引（0=x, 1=y, 2=z）
+		if (x.size() > y.size()) return x.size() > z.size() ? 0 : 2;
+		else return y.size() > z.size() ? 1 : 2;
+	}
+
+	static const aabb empty, universe;
+
 
 };
+
+const aabb aabb::empty = aabb(interval::empty, interval::empty, interval::empty);
+const aabb aabb::universe = aabb(interval::universe, interval::universe, interval::universe);

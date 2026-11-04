@@ -15,10 +15,18 @@ public:
 	}
 
 	bvh_node(std::vector<std::shared_ptr<hittable>>& objects, size_t start, size_t end) {
-		int axis{ random_int(0, 2) };
+		// 构建源对象跨度的边界框
+		bbox = aabb::empty;
+
+		for (size_t object_index = start; object_index < end; object_index++) {
+			bbox = aabb(bbox, objects[object_index]->bounding_box());
+		}
+
+		int axis{ bbox.longest_axis() };
 		auto comparator = (axis == 0) ? box_x_compare
 			: (axis == 1) ? box_y_compare
 			: box_z_compare;
+
 
 		size_t object_span = end - start;
 
