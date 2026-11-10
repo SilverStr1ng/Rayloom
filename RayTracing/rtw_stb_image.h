@@ -25,7 +25,14 @@ public:
         // width() and height() will return 0.
 
         auto filename = std::string(image_filename);
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996) // Use standard getenv for this read-only lookup.
+#endif
         auto imagedir = getenv("RTW_IMAGES");
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
         // Hunt for the image file in some likely locations.
         if (imagedir && load(std::string(imagedir) + "/" + image_filename)) return;
